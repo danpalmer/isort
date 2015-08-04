@@ -1283,6 +1283,35 @@ def test_custom_sections():
                            "import p24.imports._VERSION as VERSION\n"
                            "import p24.shared.media_wiki_syntax as syntax\n")
 
+def test_custom_sections_2():
+    test_input = ("import datetime\n"
+                  "\n"
+                  "from django_extensions.db.fields.json import JSONField\n"
+                  "\n"
+                  "from django.db import models\n"
+                  "from django.contrib.auth.models import User\n"
+                  "\n"
+                  "from acme.products import AcmeProduct\n"
+                  "\n"
+                  "from .utils import util_func\n"
+                  "from .managers import MyModelManager")
+    test_output = SortImports(file_contents=test_input,
+                length_sort=True,
+                known_first_party=['acme'],
+                known_django=['django'],
+                sections=["FUTURE", "STDLIB", "THIRDPARTY", "DJANGO", "FIRSTPARTY", "LOCALFOLDER"]).output
+    assert test_output == ("import datetime"
+                           "\n"
+                           "from django_extensions.db.fields.json import JSONField\n"
+                           "\n"
+                           "from django.db import models\n"
+                           "from django.contrib.auth.models import User\n"
+                           "\n"
+                           "from acme.products import AcmeProduct\n"
+                           "\n"
+                           "from .utils import util_func\n"
+                           "from .managers import MyModelManager\n")
+
 
 def test_sticky_comments():
     """Test to ensure it is possible to make comments 'stick' above imports"""
